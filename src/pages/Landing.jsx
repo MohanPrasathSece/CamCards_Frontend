@@ -105,7 +105,7 @@ export default function Landing() {
         
         {/* Mobile Layout - Minimal Experience */}
         <div className="lg:hidden flex-1 overflow-y-auto">
-          <div className="px-5 py-8 space-y-8">
+          <div className="px-5 py-8 space-y-6">
             <header className="flex items-center justify-between">
               <BrandLogo size={48} rounded={false} />
               <span className="text-[11px] font-medium text-green-800 border border-green-200 rounded-full px-3 py-1 bg-white/80 backdrop-blur">
@@ -113,40 +113,12 @@ export default function Landing() {
               </span>
             </header>
 
-            <section className="bg-white/95 backdrop-blur rounded-2xl border border-green-100 p-5 space-y-4 shadow-sm">
-              <div className="space-y-2">
-                <p className="text-[11px] tracking-[0.25em] uppercase text-green-500">Campus wallet</p>
-                <h1 className="text-2xl font-semibold text-green-900 leading-snug">Cashless operations made simple.</h1>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Manage payments, access, and balances through a secure RFID platform tailored for institutions.
-                </p>
-              </div>
-              <div className="space-y-2">
-                <button
-                  onClick={() => setShowStudent(true)}
-                  className="w-full rounded-lg bg-green-600 text-white text-sm font-semibold py-2.5 transition-colors hover:bg-green-700"
-                >
-                  Student Portal
-                </button>
-                <button
-                  onClick={() => setShowAdmin(true)}
-                  className="w-full rounded-lg border border-green-200 text-green-700 text-sm font-semibold py-2.5 bg-white/90 transition-colors hover:bg-green-50"
-                >
-                  Admin Console
-                </button>
-              </div>
-            </section>
-
-            <section className="space-y-4">
-              <div className="inline-flex items-center gap-2 bg-white rounded-full px-3 py-1.5 shadow-sm border border-green-200">
-                <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                <span className="text-xs font-semibold text-green-700">{brandName}</span>
-              </div>
+            <section className="space-y-6 mt-6">
               <div className="text-center">
                 <h2 className="text-3xl font-bold text-green-800 mb-2">{brandName}</h2>
                 <p className="text-green-600 text-sm font-medium">Smart • Secure • Sustainable</p>
               </div>
-              <div className="space-y-4">
+              <div className="space-y-6 pt-3">
                 <div className="bg-white rounded-lg shadow-md border border-green-100 overflow-hidden">
                   <div className="p-4">
                     <div className="flex items-start gap-3 mb-2.5">
