@@ -358,14 +358,20 @@ export default function Admin() {
   const addStudent = async () => {
     try {
       setError(''); setSaving(true);
-      const required = ['name', 'rollNo', 'email', 'password', 'RFIDNumber'];
+      const required = ['name', 'rollNo', 'email', 'mobileNumber', 'password', 'RFIDNumber'];
       for (const field of required) {
-        if (!form[field]) {
+        const value = typeof form[field] === 'string' ? form[field].trim() : form[field];
+        if (!value) {
           setError(`${field.charAt(0).toUpperCase() + field.slice(1)} is required`);
           return;
         }
       }
-      await api.post('/admin/students', form);
+      const phone = form.mobileNumber.trim();
+      if (!/^\+?\d{7,15}$/.test(phone)) {
+        setError('Enter a valid mobile number (7-15 digits, optional + prefix)');
+        return;
+      }
+      await api.post('/admin/students', { ...form, mobileNumber: phone });
       setForm({ name: '', rollNo: '', email: '', mobileNumber: '', password: '', RFIDNumber: '', department: '' });
       await loadStudents();
     } catch (e) {
@@ -596,6 +602,15 @@ export default function Admin() {
                       autoCorrect="off"
                       autoCapitalize="none"
                       placeholder="Email Address *"
+                    />
+                    <input
+                      type="tel"
+                      value={form.mobileNumber}
+                      onChange={(e) => setForm(v => ({ ...v, mobileNumber: e.target.value }))}
+                      className="w-full border-2 border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 text-sm bg-white/50 dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:bg-white dark:hover:bg-gray-700"
+                      autoComplete="tel"
+                      name="mobile-number"
+                      placeholder="Mobile Number *"
                     />
                     <input
                       type="text"
