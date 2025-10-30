@@ -8,7 +8,7 @@ import { api } from '../shared/api.js';
 import { io } from 'socket.io-client';
 
 export default function Admin() {
-  const { user } = useAuth();
+  const { user, initializing } = useAuth();
   const navigate = useNavigate();
   const [students, setStudents] = useState([]);
   const [error, setError] = useState('');
@@ -514,8 +514,9 @@ export default function Admin() {
   };
 
   return (
-    // Guard: only admins may access this page
-    !user || user.role !== 'admin' ? <Navigate to="/login" replace /> : (
+    initializing ? (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-gray-900 text-gray-700 dark:text-gray-200">Loading...</div>
+    ) : (!user || user.role !== 'admin' ? <Navigate to="/login" replace /> : (
     <>
 
       <div className="min-h-screen bg-slate-50 dark:bg-gray-900">
@@ -906,6 +907,6 @@ export default function Admin() {
         </div>
       )}
     </>
-    )
+    ))
   );
 }
