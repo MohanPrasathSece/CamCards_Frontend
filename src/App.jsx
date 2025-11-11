@@ -22,6 +22,7 @@ import StoreHistory from './pages/StoreHistory.jsx';
 import RFIDScanner from './pages/RFIDScanner.jsx';
 import AdminRFIDScanner from './pages/AdminRFIDScanner.jsx';
 import BulkStudentUpload from './pages/BulkStudentUpload.jsx';
+import ProtectedRoute from './shared/ProtectedRoute.jsx';
 
 export default function App() {
   return (
@@ -46,12 +47,12 @@ export default function App() {
         <Route path="/store" element={<Store />} />
         <Route path="/store/add" element={<AddItem />} />
         <Route path="/store/history" element={<StoreHistory />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/admin/students" element={<RecentStudents />} />
-        <Route path="/admin/bulk-upload" element={<BulkStudentUpload />} />
+        <Route path="/admin" element={<ProtectedRoute roles={["admin"]}><Admin /></ProtectedRoute>} />
+        <Route path="/admin/students" element={<ProtectedRoute roles={["admin"]}><RecentStudents /></ProtectedRoute>} />
+        <Route path="/admin/bulk-upload" element={<ProtectedRoute roles={["admin"]}><BulkStudentUpload /></ProtectedRoute>} />
         <Route path="/rfid-scanner" element={<RFIDScanner />} />
-        <Route path="/admin/rfid-scanner" element={<AdminRFIDScanner />} />
-        <Route path="/admin/esp32-manager" element={<ESP32Manager />} />
+        <Route path="/admin/rfid-scanner" element={<ProtectedRoute roles={["admin"]}><AdminRFIDScanner /></ProtectedRoute>} />
+        <Route path="/admin/esp32-manager" element={<ProtectedRoute roles={["admin"]}><ESP32Manager /></ProtectedRoute>} />
       </Route>
 
       {/* Fallback route */}
@@ -59,3 +60,4 @@ export default function App() {
     </Routes>
   );
 }
+

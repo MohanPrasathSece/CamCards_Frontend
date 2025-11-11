@@ -212,6 +212,62 @@ export default function Admin() {
     const socket = io(url, { transports: ['websocket', 'polling'] });
     socketRef.current = socket;
     // Listen for RFID scans from global connector and auto-fill form
+    const onSerialStatus = (payload = {}) => {
+      const evt = payload?.event;
+      const message = payload?.message;
+      const extra = payload?.extra;
+      switch (evt) {
+        case 'opening': {
+          const baudSuffix = extra?.baudRate ? ` (${extra.baudRate})` : '';
+          setSerialConnected(false);
+          setSerialStatus(`Opening${baudSuffix}...`);
+          break;
+        }
+        case 'connected':
+          setSerialConnected(true);
+          setSerialStatus('✅ Connected');
+          break;
+        case 'boot-ok':
+          setSerialConnected(true);
+          setSerialStatus('ESP32 booted');
+          break;
+        case 'rfid-ready':
+          setSerialConnected(true);
+          setSerialStatus('RFID ready');
+          break;
+        case 'rc522-error':
+          setSerialConnected(true);
+          setSerialStatus('RC522 error - check wiring');
+          break;
+        case 'disconnected':
+          setSerialConnected(false);
+          setSerialStatus('Disconnected');
+          break;
+        case 'read-error':
+          setSerialConnected(false);
+          setSerialStatus(message ? `Read error: ${message}` : 'Read error');
+          break;
+        case 'connect-failed':
+          setSerialConnected(false);
+          setSerialStatus(message ? `Connect failed: ${message}` : 'Connect failed');
+          break;
+        case 'disconnect-error':
+          setSerialConnected(false);
+          setSerialStatus(message ? `Disconnect error: ${message}` : 'Disconnect error');
+          break;
+        case 'unsupported':
+          setSerialConnected(false);
+          setSerialStatus(message || 'Web Serial not supported');
+          break;
+        default:
+          if (typeof message === 'string' && message) {
+            setSerialStatus(message);
+          }
+      }
+    };
+
+    socket.on('esp32:web-serial', onSerialStatus);
+
     const onScan = (payload) => {
       try {
         const uid = payload?.uid || payload?.rfid || payload?.RFIDNumber;
@@ -275,7 +331,15 @@ export default function Admin() {
     };
     socket.on('ui:rfid-scan', onUiScan);
     socket.on('ui:rfid-clear', onUiClear);
-    return () => { try { socket.disconnect(); } catch {} };
+    return () => {
+      try {
+        socket.off('esp32:web-serial', onSerialStatus);
+        socket.off('esp32:rfid-scan', onScan);
+        socket.off('ui:rfid-scan', onUiScan);
+        socket.off('ui:rfid-clear', onUiClear);
+      } catch {}
+      try { socket.disconnect(); } catch {}
+    };
   }, []);
 
   // Window-level backup listeners for same-tab sync
