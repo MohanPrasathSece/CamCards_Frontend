@@ -7,6 +7,7 @@ import Scans from './pages/Scans.jsx';
 import Food from './pages/Food.jsx';
 import RecentStudents from './pages/RecentStudents.jsx';
 import AddItem from './pages/AddItem.jsx';
+import AddBook from './pages/AddBook.jsx';
 import FoodHistory from './pages/FoodHistory.jsx';
 import StudentDashboard from './pages/StudentDashboard.jsx';
 import StudentHistory from './pages/StudentHistory.jsx';
@@ -39,7 +40,7 @@ export default function App() {
       {/* Routes with the sidebar layout */}
       <Route element={<MainLayout />}>
         <Route path="/library" element={<Library />} />
-        <Route path="/library/add" element={<AddItem />} />
+        <Route path="/library/add" element={<AddBook />} />
         <Route path="/:module/scans" element={<Scans />} />
         <Route path="/food" element={<Food />} />
         <Route path="/food/add" element={<AddItem />} />
