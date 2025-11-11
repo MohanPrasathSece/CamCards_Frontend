@@ -211,6 +211,19 @@ export default function Admin() {
     const url = import.meta.env.VITE_SOCKET_URL || (window.location.origin.replace(/\/$/, ''));
     const socket = io(url, { transports: ['websocket', 'polling'] });
     socketRef.current = socket;
+    // Hydrate KPI status from cached value immediately
+    try {
+      const raw = localStorage.getItem('esp32_status');
+      if (raw) {
+        const s = JSON.parse(raw);
+        setSerialConnected(!!s?.connected);
+        setSerialStatus(s?.status || (s?.connected ? 'Connected' : 'Not connected'));
+      }
+    } catch {}
+    // Ask Sidebar for freshest status (responds on esp32:status:update)
+    try { socket.emit('esp32:status:request'); } catch {}
+    setTimeout(() => { try { socket.emit('esp32:status:request'); } catch {} }, 300);
+
     // Listen for RFID scans from global connector and auto-fill form
     const onSerialStatus = (payload = {}) => {
       const evt = payload?.event;
@@ -267,6 +280,14 @@ export default function Admin() {
     };
 
     socket.on('esp32:web-serial', onSerialStatus);
+    // Direct status updates from Sidebar responder
+    const onStatusUpdate = (p = {}) => {
+      try {
+        setSerialConnected(!!p.connected);
+        setSerialStatus(p.status || (p.connected ? 'Connected' : 'Not connected'));
+      } catch {}
+    };
+    socket.on('esp32:status:update', onStatusUpdate);
 
     const onScan = (payload) => {
       try {
@@ -334,6 +355,7 @@ export default function Admin() {
     return () => {
       try {
         socket.off('esp32:web-serial', onSerialStatus);
+        socket.off('esp32:status:update', onStatusUpdate);
         socket.off('esp32:rfid-scan', onScan);
         socket.off('ui:rfid-scan', onUiScan);
         socket.off('ui:rfid-clear', onUiClear);
